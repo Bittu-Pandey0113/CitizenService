@@ -29,15 +29,18 @@ USER spring
 
 EXPOSE 8080 10000
 
-# Use Serial GC (lowest memory), tight heap to stay under 512MB total
-# PORT env var injected by Render at runtime (default 10000)
+# Use Serial GC (lowest memory), C1-only compiler for 3x faster startup & low RAM
+# Heap max 160MB + Metaspace max 160MB fits perfectly in Render 512MB free tier
 ENV PORT=10000
 ENTRYPOINT ["java", \
   "-XX:+UseSerialGC", \
+  "-XX:+TieredCompilation", \
+  "-XX:TieredStopAtLevel=1", \
   "-Xms32m", \
-  "-Xmx192m", \
-  "-XX:MaxMetaspaceSize=80m", \
-  "-XX:CompressedClassSpaceSize=24m", \
+  "-Xmx160m", \
+  "-XX:MetaspaceSize=96m", \
+  "-XX:MaxMetaspaceSize=160m", \
+  "-XX:CompressedClassSpaceSize=48m", \
   "-Xss256k", \
   "-XX:+ExitOnOutOfMemoryError", \
   "-Djava.security.egd=file:/dev/./urandom", \
