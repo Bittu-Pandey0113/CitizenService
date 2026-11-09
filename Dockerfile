@@ -28,4 +28,4 @@ USER spring
 
 EXPOSE 8080 10000
 
-ENTRYPOINT ["java", "-XX:+UseSerialGC", "-Xms128m", "-Xmx320m", "-XX:MaxMetaspaceSize=128m", "-jar", "/app/app.war"]
+ENTRYPOINT ["java", "-XX:+UseSerialGC", "-Xms64m", "-Xmx224m", "-XX:MaxMetaspaceSize=96m", "-XX:CompressedClassSpaceSize=32m", "-Xss512k", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/app.war"]

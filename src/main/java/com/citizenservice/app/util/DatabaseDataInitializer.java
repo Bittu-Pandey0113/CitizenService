@@ -6,7 +6,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -26,11 +27,11 @@ import com.citizenservice.app.repository.UserRoleRepository;
 
 /**
  * Self-healing database bootstrapper.
- * Automatically verifies/creates tables and seeds baseline roles and accounts
- * on application startup so manual SQL import in TiDB / MySQL is never required.
+ * Executes asynchronously on ApplicationReadyEvent so it never delays
+ * Tomcat HTTP port binding or triggers Render 502 timeouts.
  */
 @Component
-public class DatabaseDataInitializer implements CommandLineRunner {
+public class DatabaseDataInitializer {
 
 	private static final Logger log = LoggerFactory.getLogger(DatabaseDataInitializer.class);
 
@@ -58,17 +59,23 @@ public class DatabaseDataInitializer implements CommandLineRunner {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
-	@Override
-	public void run(String... args) {
-		try {
-			log.info("Running DatabaseDataInitializer - checking schema and seeding baseline data...");
-			ensureTablesExist();
-			seedRolesAndUsers();
-			seedSampleCertificates();
-			log.info("DatabaseDataInitializer completed successfully.");
-		} catch (Exception e) {
-			log.error("DatabaseDataInitializer warning during initialization: {}", e.getMessage(), e);
-		}
+	@EventListener(ApplicationReadyEvent.class)
+	public void onApplicationReady() {
+		Thread initThread = new Thread(() -> {
+			try {
+				// Brief pause to allow embedded Tomcat to complete HTTP handshake
+				Thread.sleep(1500);
+				log.info("Starting background DatabaseDataInitializer...");
+				ensureTablesExist();
+				seedRolesAndUsers();
+				seedSampleCertificates();
+				log.info("DatabaseDataInitializer completed successfully.");
+			} catch (Exception e) {
+				log.warn("DatabaseDataInitializer note: {}", e.getMessage());
+			}
+		}, "db-init-worker");
+		initThread.setDaemon(true);
+		initThread.start();
 	}
 
 	private void ensureTablesExist() {
