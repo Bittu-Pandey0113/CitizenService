@@ -14,8 +14,8 @@ RUN mvn dependency:go-offline -B || true
 COPY src ./src
 RUN mvn clean package -Dmaven.test.skip=true -o || mvn clean package -DskipTests
 
-# Stage 2: Production Runtime
-FROM eclipse-temurin:21-jre-jammy
+# Stage 2: Production Runtime (Full JDK required for Tomcat Jasper JSP runtime compilation)
+FROM eclipse-temurin:21-jdk-jammy
 WORKDIR /app
 
 # Create unprivileged system user
