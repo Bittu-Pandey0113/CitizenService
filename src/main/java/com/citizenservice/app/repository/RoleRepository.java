@@ -11,9 +11,12 @@ import com.citizenservice.app.model.Role;
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
 	@Query("FROM Role WHERE roleId=:roleId")     
-	Role findRoleByRoleId(@Param("roleId")Long roleId);
+	Role findRoleByRoleId(@Param("roleId") Long roleId);
 
 	@Query("FROM Role WHERE deleted IS null")     
 	List<Role> findAllActiveRole(); 
 	
-} 
+	@Query("FROM Role WHERE roleType=:roleType")
+	List<Role> findByRoleType(@Param("roleType") String roleType);
+
+}

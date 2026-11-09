@@ -312,19 +312,19 @@ public class UserController {
 	@PostMapping("/applyBirthCertificate.htm")
 	public String applyBirthCeritificate(HttpServletRequest request, Model model,
 
-			@RequestParam(value = "cname") String cName, @RequestParam(value = "gender") String gender,
-			@RequestParam(value = "dOB") String dOB, @RequestParam(value = "birthPlace") String birthPlace,
-			//@RequestParam(value = "birthProofFile") MultipartFile birthProofFile, 
-			@RequestParam(value = "birthProofFile") String birthProofFile, 
-			@RequestParam(value = "fName") String fName,
-			@RequestParam(value = "idProofFather") String idProofFather, @RequestParam(value = "mName") String mName,
-			@RequestParam(value = "idProofMother") String idProofMother,
-			@RequestParam(value = "marriageCertificate") String marriageCertificate,
-			@RequestParam(value = "mobileNumber") String mobileNumber, @RequestParam(value = "emailId") String emailId,
-			@RequestParam(value = "address") String address, @RequestParam(value = "dist") String dist,
-			@RequestParam(value = "state") String state, @RequestParam(value = "country") String country,
-			@RequestParam(value = "pinCode") String pinCode, @RequestParam(value = "signFather") String signFather,
-			@RequestParam(value = "signMother") String signMother, RedirectAttributes message) throws Exception {
+			@RequestParam(value = "cname", required = false, defaultValue = "") String cName, @RequestParam(value = "gender", required = false, defaultValue = "") String gender,
+			@RequestParam(value = "dOB", required = false, defaultValue = "") String dOB, @RequestParam(value = "birthPlace", required = false, defaultValue = "") String birthPlace,
+			//@RequestParam(value = "birthProofFile", required = false, defaultValue = "") MultipartFile birthProofFile, 
+			@RequestParam(value = "birthProofFile", required = false, defaultValue = "") String birthProofFile, 
+			@RequestParam(value = "fName", required = false, defaultValue = "") String fName,
+			@RequestParam(value = "idProofFather", required = false, defaultValue = "") String idProofFather, @RequestParam(value = "mName", required = false, defaultValue = "") String mName,
+			@RequestParam(value = "idProofMother", required = false, defaultValue = "") String idProofMother,
+			@RequestParam(value = "marriageCertificate", required = false, defaultValue = "") String marriageCertificate,
+			@RequestParam(value = "mobileNumber", required = false, defaultValue = "") String mobileNumber, @RequestParam(value = "emailId", required = false, defaultValue = "") String emailId,
+			@RequestParam(value = "address", required = false, defaultValue = "") String address, @RequestParam(value = "dist", required = false, defaultValue = "") String dist,
+			@RequestParam(value = "state", required = false, defaultValue = "") String state, @RequestParam(value = "country", required = false, defaultValue = "") String country,
+			@RequestParam(value = "pinCode", required = false, defaultValue = "") String pinCode, @RequestParam(value = "signFather", required = false, defaultValue = "") String signFather,
+			@RequestParam(value = "signMother", required = false, defaultValue = "") String signMother, RedirectAttributes message) throws Exception {
 		
 		User user = SecurityHelper.getCurrentUser();
 		
@@ -402,23 +402,23 @@ public class UserController {
 	@PostMapping("/applyDeathCertificate.htm")
 	public String applyDeathCeritificate(HttpServletRequest request, Model model,
 
-			@RequestParam(value = "name") String name, @RequestParam(value = "fName") String fName,
-			@RequestParam(value = "dOB") String dOB, @RequestParam(value = "gender") String gender,
-			@RequestParam(value = "deathDate") String deathDate, @RequestParam(value = "deathCause") String deathCause,
-			@RequestParam(value = "deathPlace") String deathPlace,
-			@RequestParam(value = "deathProofFile") String deathProofFile,
-			@RequestParam(value = "address") String address,
-			@RequestParam(value = "policeStation") String policeStation, @RequestParam(value = "dist") String dist,
-			@RequestParam(value = "state") String state, @RequestParam(value = "country") String country,
-			@RequestParam(value = "pinCode") String pinCode, @RequestParam(value = "aName") String aName,
-			@RequestParam(value = "idProofApplicant") String idProofApplicant,
-			@RequestParam(value = "relation") String relation,
-			@RequestParam(value = "mobileNumber") String mobileNumber,
-			@RequestParam(value = "aAddress") String aAddress,
-			@RequestParam(value = "aPoliceStation") String aPoliceStation, @RequestParam(value = "aDist") String aDist,
-			@RequestParam(value = "aState") String aState, @RequestParam(value = "aCountry") String aCountry,
-			@RequestParam(value = "aPinCode") String aPinCode,
-			@RequestParam(value = "signApplicant") String signApplicant, RedirectAttributes message) {
+			@RequestParam(value = "name", required = false, defaultValue = "") String name, @RequestParam(value = "fName", required = false, defaultValue = "") String fName,
+			@RequestParam(value = "dOB", required = false, defaultValue = "") String dOB, @RequestParam(value = "gender", required = false, defaultValue = "") String gender,
+			@RequestParam(value = "deathDate", required = false, defaultValue = "") String deathDate, @RequestParam(value = "deathCause", required = false, defaultValue = "") String deathCause,
+			@RequestParam(value = "deathPlace", required = false, defaultValue = "") String deathPlace,
+			@RequestParam(value = "deathProofFile", required = false, defaultValue = "") String deathProofFile,
+			@RequestParam(value = "address", required = false, defaultValue = "") String address,
+			@RequestParam(value = "policeStation", required = false, defaultValue = "") String policeStation, @RequestParam(value = "dist", required = false, defaultValue = "") String dist,
+			@RequestParam(value = "state", required = false, defaultValue = "") String state, @RequestParam(value = "country", required = false, defaultValue = "") String country,
+			@RequestParam(value = "pinCode", required = false, defaultValue = "") String pinCode, @RequestParam(value = "aName", required = false, defaultValue = "") String aName,
+			@RequestParam(value = "idProofApplicant", required = false, defaultValue = "") String idProofApplicant,
+			@RequestParam(value = "relation", required = false, defaultValue = "") String relation,
+			@RequestParam(value = "mobileNumber", required = false, defaultValue = "") String mobileNumber,
+			@RequestParam(value = "aAddress", required = false, defaultValue = "") String aAddress,
+			@RequestParam(value = "aPoliceStation", required = false, defaultValue = "") String aPoliceStation, @RequestParam(value = "aDist", required = false, defaultValue = "") String aDist,
+			@RequestParam(value = "aState", required = false, defaultValue = "") String aState, @RequestParam(value = "aCountry", required = false, defaultValue = "") String aCountry,
+			@RequestParam(value = "aPinCode", required = false, defaultValue = "") String aPinCode,
+			@RequestParam(value = "signApplicant", required = false, defaultValue = "") String signApplicant, RedirectAttributes message) {
 
 		User user = SecurityHelper.getCurrentUser();
 		// User existingUser =
@@ -473,95 +473,95 @@ public class UserController {
 	@PostMapping("/applyMarriageCertificate.htm")
 	public String applyMarriageCertificate(HttpServletRequest request, Model model,
 
-			@RequestParam(value = "groomName") String groomName,
+			@RequestParam(value = "groomName", required = false, defaultValue = "") String groomName,
 
-			@RequestParam(value = "groomIdProof") String groomIdProof,
+			@RequestParam(value = "groomIdProof", required = false, defaultValue = "") String groomIdProof,
 
-			@RequestParam(value = "groomPhoto") String groomPhoto,
+			@RequestParam(value = "groomPhoto", required = false, defaultValue = "") String groomPhoto,
 
-			@RequestParam(value = "groomFather") String groomFather,
+			@RequestParam(value = "groomFather", required = false, defaultValue = "") String groomFather,
 
-			@RequestParam(value = "groomMother") String groomMother,
+			@RequestParam(value = "groomMother", required = false, defaultValue = "") String groomMother,
 
-			@RequestParam(value = "gDOB") String gDOB,
+			@RequestParam(value = "gDOB", required = false, defaultValue = "") String gDOB,
 
-			@RequestParam(value = "gReligion") String gReligion,
+			@RequestParam(value = "gReligion", required = false, defaultValue = "") String gReligion,
 
-			@RequestParam(value = "gMobile") String gMobile,
+			@RequestParam(value = "gMobile", required = false, defaultValue = "") String gMobile,
 
-			@RequestParam(value = "gEmail") String gEmail,
+			@RequestParam(value = "gEmail", required = false, defaultValue = "") String gEmail,
 
-			@RequestParam(value = "gAddress") String gAddress,
+			@RequestParam(value = "gAddress", required = false, defaultValue = "") String gAddress,
 
-			@RequestParam(value = "gDist") String gDist,
+			@RequestParam(value = "gDist", required = false, defaultValue = "") String gDist,
 
-			@RequestParam(value = "gState") String gState,
+			@RequestParam(value = "gState", required = false, defaultValue = "") String gState,
 
-			@RequestParam(value = "gCountry") String gCountry,
+			@RequestParam(value = "gCountry", required = false, defaultValue = "") String gCountry,
 
-			@RequestParam(value = "gPin") String gPin,
+			@RequestParam(value = "gPin", required = false, defaultValue = "") String gPin,
 
-			@RequestParam(value = "gWitness") String gWitness,
+			@RequestParam(value = "gWitness", required = false, defaultValue = "") String gWitness,
 
-			@RequestParam(value = "gWitnessId") String gWitnessId,
+			@RequestParam(value = "gWitnessId", required = false, defaultValue = "") String gWitnessId,
 
-			@RequestParam(value = "gWitnessMobile") String gWitnessMobile,
+			@RequestParam(value = "gWitnessMobile", required = false, defaultValue = "") String gWitnessMobile,
 
-			@RequestParam(value = "gWitnessRelation") String gWitnessRelation,
+			@RequestParam(value = "gWitnessRelation", required = false, defaultValue = "") String gWitnessRelation,
 
-			@RequestParam(value = "gWitnessAddress") String gWitnessAddress,
+			@RequestParam(value = "gWitnessAddress", required = false, defaultValue = "") String gWitnessAddress,
 
-			@RequestParam(value = "brideName") String brideName,
+			@RequestParam(value = "brideName", required = false, defaultValue = "") String brideName,
 
-			@RequestParam(value = "brideIdProof") String brideIdProof,
+			@RequestParam(value = "brideIdProof", required = false, defaultValue = "") String brideIdProof,
 
-			@RequestParam(value = "bridePhoto") String bridePhoto,
+			@RequestParam(value = "bridePhoto", required = false, defaultValue = "") String bridePhoto,
 
-			@RequestParam(value = "brideFather") String brideFather,
+			@RequestParam(value = "brideFather", required = false, defaultValue = "") String brideFather,
 
-			@RequestParam(value = "brideMother") String brideMother,
+			@RequestParam(value = "brideMother", required = false, defaultValue = "") String brideMother,
 
-			@RequestParam(value = "bDOB") String bDOB,
+			@RequestParam(value = "bDOB", required = false, defaultValue = "") String bDOB,
 
-			@RequestParam(value = "bReligion") String bReligion,
+			@RequestParam(value = "bReligion", required = false, defaultValue = "") String bReligion,
 
-			@RequestParam(value = "bMobile") String bMobile,
+			@RequestParam(value = "bMobile", required = false, defaultValue = "") String bMobile,
 
-			@RequestParam(value = "bEmail") String bEmail,
+			@RequestParam(value = "bEmail", required = false, defaultValue = "") String bEmail,
 
-			@RequestParam(value = "bAddress") String bAddress,
+			@RequestParam(value = "bAddress", required = false, defaultValue = "") String bAddress,
 
-			@RequestParam(value = "bDist") String bDist,
+			@RequestParam(value = "bDist", required = false, defaultValue = "") String bDist,
 
-			@RequestParam(value = "bState") String bState,
+			@RequestParam(value = "bState", required = false, defaultValue = "") String bState,
 
-			@RequestParam(value = "bCountry") String bCountry,
+			@RequestParam(value = "bCountry", required = false, defaultValue = "") String bCountry,
 
-			@RequestParam(value = "bPin") String bPin,
+			@RequestParam(value = "bPin", required = false, defaultValue = "") String bPin,
 
-			@RequestParam(value = "bWitness") String bWitness,
+			@RequestParam(value = "bWitness", required = false, defaultValue = "") String bWitness,
 
-			@RequestParam(value = "bWitnessId") String bWitnessId,
+			@RequestParam(value = "bWitnessId", required = false, defaultValue = "") String bWitnessId,
 
-			@RequestParam(value = "bWitnessMobile") String bWitnessMobile,
+			@RequestParam(value = "bWitnessMobile", required = false, defaultValue = "") String bWitnessMobile,
 
-			@RequestParam(value = "bWitnessRelation") String bWitnessRelation,
+			@RequestParam(value = "bWitnessRelation", required = false, defaultValue = "") String bWitnessRelation,
 
-			@RequestParam(value = "bWitnessAddress") String bWitnessAddress,
+			@RequestParam(value = "bWitnessAddress", required = false, defaultValue = "") String bWitnessAddress,
 
-			@RequestParam(value = "marriageDate") String marriageDate,
+			@RequestParam(value = "marriageDate", required = false, defaultValue = "") String marriageDate,
 
-			@RequestParam(value = "marriageType") String marriageType,
+			@RequestParam(value = "marriageType", required = false, defaultValue = "") String marriageType,
 
-			@RequestParam(value = "marriageProof") String marriageProof,
+			@RequestParam(value = "marriageProof", required = false, defaultValue = "") String marriageProof,
 
-			@RequestParam(value = "groomSign") String groomSign,
+			@RequestParam(value = "groomSign", required = false, defaultValue = "") String groomSign,
 
-			@RequestParam(value = "brideSign") String brideSign,
+			@RequestParam(value = "brideSign", required = false, defaultValue = "") String brideSign,
 
-			@RequestParam(value = "gWitnessSign") String gWitnessSign,
+			@RequestParam(value = "gWitnessSign", required = false, defaultValue = "") String gWitnessSign,
 
-			@RequestParam(value = "bWitnessSign") String bWitnessSign, RedirectAttributes message) {
+			@RequestParam(value = "bWitnessSign", required = false, defaultValue = "") String bWitnessSign, RedirectAttributes message) {
 
 		User user = SecurityHelper.getCurrentUser();
 

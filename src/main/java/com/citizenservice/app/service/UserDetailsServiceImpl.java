@@ -37,7 +37,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 		Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 		UserRole userRole = userRoleRepository.getUserRoleByUserId(user.getUserId()); 
-		String roleType = userRole.getRoleId().getRoleType(); 
+		String roleType = "user";
+		if (userRole != null && userRole.getRoleId() != null && userRole.getRoleId().getRoleType() != null) {
+			roleType = userRole.getRoleId().getRoleType(); 
+		}
 		grantedAuthorities.add(new SimpleGrantedAuthority(roleType)); 
 		boolean mybool = (user.getDeleted() == null); 
 
