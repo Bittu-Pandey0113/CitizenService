@@ -13,7 +13,7 @@ RUN mvn dependency:go-offline -B || true
 COPY src ./src
 RUN mvn clean package -Dmaven.test.skip=true -o || mvn clean package -DskipTests
 
-# Stage 2: Production Runtime
+# Stage 2: Production Runtime (Optimized for 512MB RAM free tier)
 FROM eclipse-temurin:21-jdk-jammy
 WORKDIR /app
 
@@ -26,7 +26,6 @@ COPY --from=builder /build/target/citizenservice-*.war /app/app.war
 RUN chown -R spring:spring /app
 USER spring
 
-EXPOSE 8080
-ENV PORT=8080
+EXPOSE 8080 10000
 
-ENTRYPOINT ["java", "-XX:+UseG1GC", "-Xms256m", "-Xmx768m", "-jar", "/app/app.war"]
+ENTRYPOINT ["java", "-XX:+UseSerialGC", "-Xms128m", "-Xmx320m", "-XX:MaxMetaspaceSize=128m", "-jar", "/app/app.war"]
