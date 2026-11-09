@@ -1,6 +1,7 @@
 # ==============================================================================
 # Production Dockerfile for Citizen Service Portal (Spring Boot 4 + JSP + Tomcat)
-# Multi-stage build with full OpenJDK 21 for Tomcat Jasper runtime JSP compilation
+# Multi-stage build — JDK 21 for Tomcat Jasper JSP compilation at runtime
+# Optimized for Render Free Tier: 512MB RAM, port $PORT
 # ==============================================================================
 
 # Stage 1: Build War
@@ -13,8 +14,8 @@ RUN mvn dependency:go-offline -B || true
 COPY src ./src
 RUN mvn clean package -Dmaven.test.skip=true -o || mvn clean package -DskipTests
 
-# Stage 2: Production Runtime (Optimized for 512MB RAM free tier)
-FROM eclipse-temurin:21-jdk-jammy
+# Stage 2: Production Runtime
+FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
 # Create unprivileged system user
@@ -28,4 +29,16 @@ USER spring
 
 EXPOSE 8080 10000
 
-ENTRYPOINT ["java", "-XX:+UseSerialGC", "-Xms64m", "-Xmx224m", "-XX:MaxMetaspaceSize=96m", "-XX:CompressedClassSpaceSize=32m", "-Xss512k", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/app.war"]
+# Use Serial GC (lowest memory), tight heap to stay under 512MB total
+# PORT env var injected by Render at runtime (default 10000)
+ENV PORT=10000
+ENTRYPOINT ["java", \
+  "-XX:+UseSerialGC", \
+  "-Xms32m", \
+  "-Xmx192m", \
+  "-XX:MaxMetaspaceSize=80m", \
+  "-XX:CompressedClassSpaceSize=24m", \
+  "-Xss256k", \
+  "-XX:+ExitOnOutOfMemoryError", \
+  "-Djava.security.egd=file:/dev/./urandom", \
+  "-jar", "/app/app.war"]

@@ -234,6 +234,14 @@ public class DatabaseDataInitializer {
 					"PRIMARY KEY (`application_id`)" +
 					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
+			jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS `sign_user` (" +
+					"`sign_id` bigint NOT NULL AUTO_INCREMENT, " +
+					"`sign_name` varchar(255) DEFAULT NULL, " +
+					"`sign_path` varchar(255) DEFAULT NULL, " +
+					"`user_id` bigint DEFAULT NULL, " +
+					"PRIMARY KEY (`sign_id`)" +
+					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
 			log.info("Verified all core tables exist in database.");
 		} catch (Exception e) {
 			log.warn("Table auto-creation notice: {}", e.getMessage());
