@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -25,13 +26,16 @@ import com.citizenservice.app.repository.UserRoleRepository;
 
 /**
  * Self-healing database bootstrapper.
- * Automatically initializes required roles, system accounts, and baseline data
+ * Automatically verifies/creates tables and seeds baseline roles and accounts
  * on application startup so manual SQL import in TiDB / MySQL is never required.
  */
 @Component
 public class DatabaseDataInitializer implements CommandLineRunner {
 
 	private static final Logger log = LoggerFactory.getLogger(DatabaseDataInitializer.class);
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
 	private RoleRepository roleRepository;
@@ -58,11 +62,174 @@ public class DatabaseDataInitializer implements CommandLineRunner {
 	public void run(String... args) {
 		try {
 			log.info("Running DatabaseDataInitializer - checking schema and seeding baseline data...");
+			ensureTablesExist();
 			seedRolesAndUsers();
 			seedSampleCertificates();
 			log.info("DatabaseDataInitializer completed successfully.");
 		} catch (Exception e) {
 			log.error("DatabaseDataInitializer warning during initialization: {}", e.getMessage(), e);
+		}
+	}
+
+	private void ensureTablesExist() {
+		try {
+			jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS `user` (" +
+					"`user_id` bigint NOT NULL AUTO_INCREMENT, " +
+					"`user_name` varchar(50) NOT NULL, " +
+					"`password` varchar(128) NOT NULL, " +
+					"`mobile_no` varchar(20) DEFAULT NULL, " +
+					"`st` varchar(20) DEFAULT NULL, " +
+					"`created_by` bigint DEFAULT NULL, " +
+					"`created_on` datetime DEFAULT NULL, " +
+					"`updated_by` bigint DEFAULT NULL, " +
+					"`updated_on` datetime DEFAULT NULL, " +
+					"`remark` varchar(100) DEFAULT NULL, " +
+					"`deleted` varchar(20) DEFAULT NULL, " +
+					"`name` varchar(100) DEFAULT NULL, " +
+					"`email` varchar(100) DEFAULT NULL, " +
+					"`address` varchar(500) DEFAULT NULL, " +
+					"`otp` varchar(45) DEFAULT NULL, " +
+					"PRIMARY KEY (`user_id`)" +
+					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+			jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS `role` (" +
+					"`role_id` bigint NOT NULL AUTO_INCREMENT, " +
+					"`role_type` varchar(50) NOT NULL, " +
+					"`remark` varchar(100) DEFAULT NULL, " +
+					"`deleted` varchar(20) DEFAULT NULL, " +
+					"`created_by` bigint DEFAULT NULL, " +
+					"`created_on` datetime DEFAULT NULL, " +
+					"`updated_by` bigint DEFAULT NULL, " +
+					"`updated_on` datetime DEFAULT NULL, " +
+					"PRIMARY KEY (`role_id`)" +
+					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+			jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS `user_role` (" +
+					"`user_role_id` bigint NOT NULL AUTO_INCREMENT, " +
+					"`user_id` bigint NOT NULL, " +
+					"`role_id` bigint NOT NULL, " +
+					"PRIMARY KEY (`user_role_id`)" +
+					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+			jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS `birth_certificate` (" +
+					"`application_id` bigint NOT NULL AUTO_INCREMENT, " +
+					"`child_name` varchar(100) DEFAULT NULL, " +
+					"`gender` varchar(20) DEFAULT NULL, " +
+					"`dob` varchar(30) DEFAULT NULL, " +
+					"`birth_place` varchar(200) DEFAULT NULL, " +
+					"`birth_proof` varchar(255) DEFAULT NULL, " +
+					"`father_name` varchar(100) DEFAULT NULL, " +
+					"`id_proof_father` varchar(255) DEFAULT NULL, " +
+					"`mother_name` varchar(100) DEFAULT NULL, " +
+					"`id_proof_mother` varchar(255) DEFAULT NULL, " +
+					"`marriage_certificate` varchar(500) DEFAULT NULL, " +
+					"`mobile_no` varchar(20) DEFAULT NULL, " +
+					"`email` varchar(100) DEFAULT NULL, " +
+					"`address` varchar(500) DEFAULT NULL, " +
+					"`dist` varchar(50) DEFAULT NULL, " +
+					"`state` varchar(50) DEFAULT NULL, " +
+					"`country` varchar(50) DEFAULT NULL, " +
+					"`pin_code` varchar(20) DEFAULT NULL, " +
+					"`father_sign` varchar(255) DEFAULT NULL, " +
+					"`mother_sign` varchar(255) DEFAULT NULL, " +
+					"`st` varchar(45) DEFAULT NULL, " +
+					"`user_id` bigint DEFAULT NULL, " +
+					"PRIMARY KEY (`application_id`)" +
+					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+			jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS `death_certificate` (" +
+					"`application_id` bigint NOT NULL AUTO_INCREMENT, " +
+					"`deceased_name` varchar(100) DEFAULT NULL, " +
+					"`father_husband_name` varchar(500) DEFAULT NULL, " +
+					"`dob` varchar(30) DEFAULT NULL, " +
+					"`gender` varchar(20) DEFAULT NULL, " +
+					"`dod` varchar(30) DEFAULT NULL, " +
+					"`cause` varchar(200) DEFAULT NULL, " +
+					"`place_of_death` varchar(200) DEFAULT NULL, " +
+					"`death_proof` varchar(255) DEFAULT NULL, " +
+					"`address` varchar(500) DEFAULT NULL, " +
+					"`police_station` varchar(100) DEFAULT NULL, " +
+					"`dist` varchar(50) DEFAULT NULL, " +
+					"`state` varchar(50) DEFAULT NULL, " +
+					"`country` varchar(50) DEFAULT NULL, " +
+					"`pin` varchar(20) DEFAULT NULL, " +
+					"`applicant_name` varchar(100) DEFAULT NULL, " +
+					"`id_proof` varchar(255) DEFAULT NULL, " +
+					"`relation` varchar(100) DEFAULT NULL, " +
+					"`mobile` varchar(20) DEFAULT NULL, " +
+					"`address_of_applicant` varchar(500) DEFAULT NULL, " +
+					"`police_station_of_applicant` varchar(100) DEFAULT NULL, " +
+					"`dist_of_applicant` varchar(50) DEFAULT NULL, " +
+					"`state_of_applicant` varchar(50) DEFAULT NULL, " +
+					"`country_of_applicant` varchar(50) DEFAULT NULL, " +
+					"`pin_of_applicant` varchar(20) DEFAULT NULL, " +
+					"`applicant_sign` varchar(255) DEFAULT NULL, " +
+					"`user` bigint DEFAULT NULL, " +
+					"`status` varchar(45) DEFAULT NULL, " +
+					"PRIMARY KEY (`application_id`)" +
+					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+			jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS `marriage_certificate` (" +
+					"`application_id` bigint NOT NULL AUTO_INCREMENT, " +
+					"`groom_name` varchar(500) DEFAULT NULL, " +
+					"`groom_id_proof` varchar(300) DEFAULT NULL, " +
+					"`groom_photo` varchar(300) DEFAULT NULL, " +
+					"`groom_father` varchar(500) DEFAULT NULL, " +
+					"`groom_mother` varchar(500) DEFAULT NULL, " +
+					"`groom_dob` varchar(30) DEFAULT NULL, " +
+					"`groom_religion` varchar(100) DEFAULT NULL, " +
+					"`groom_mobile` varchar(20) DEFAULT NULL, " +
+					"`groom_email` varchar(100) DEFAULT NULL, " +
+					"`groom_address` varchar(500) DEFAULT NULL, " +
+					"`groom_dist` varchar(50) DEFAULT NULL, " +
+					"`groom_state` varchar(50) DEFAULT NULL, " +
+					"`groom_country` varchar(50) DEFAULT NULL, " +
+					"`groom_pin` varchar(20) DEFAULT NULL, " +
+					"`groom_witness_name` varchar(500) DEFAULT NULL, " +
+					"`groom_witness_id` varchar(300) DEFAULT NULL, " +
+					"`groom_witness_mobile` varchar(20) DEFAULT NULL, " +
+					"`groom_witness_relation` varchar(100) DEFAULT NULL, " +
+					"`groom_witness_address` varchar(500) DEFAULT NULL, " +
+					"`bride_name` varchar(500) DEFAULT NULL, " +
+					"`bride_id_proof` varchar(300) DEFAULT NULL, " +
+					"`bride_photo` varchar(300) DEFAULT NULL, " +
+					"`bride_father` varchar(500) DEFAULT NULL, " +
+					"`bride_mother` varchar(500) DEFAULT NULL, " +
+					"`bride_dob` varchar(30) DEFAULT NULL, " +
+					"`bride_religion` varchar(100) DEFAULT NULL, " +
+					"`bride_mobile` varchar(20) DEFAULT NULL, " +
+					"`bride_email` varchar(100) DEFAULT NULL, " +
+					"`bride_address` varchar(500) DEFAULT NULL, " +
+					"`bride_dist` varchar(50) DEFAULT NULL, " +
+					"`bride_state` varchar(50) DEFAULT NULL, " +
+					"`bride_country` varchar(50) DEFAULT NULL, " +
+					"`bride_pin` varchar(20) DEFAULT NULL, " +
+					"`bride_witness_name` varchar(500) DEFAULT NULL, " +
+					"`bride_witness_id` varchar(300) DEFAULT NULL, " +
+					"`bride_witness_mobile` varchar(20) DEFAULT NULL, " +
+					"`bride_witness_relation` varchar(100) DEFAULT NULL, " +
+					"`bride_witness_address` varchar(500) DEFAULT NULL, " +
+					"`marriage_date` varchar(50) DEFAULT NULL, " +
+					"`marriage_type` varchar(100) DEFAULT NULL, " +
+					"`marriage_proof` varchar(300) DEFAULT NULL, " +
+					"`groom_sign` varchar(300) DEFAULT NULL, " +
+					"`bride_sign` varchar(300) DEFAULT NULL, " +
+					"`groom_witness_sign` varchar(300) DEFAULT NULL, " +
+					"`bride_witness_sign` varchar(300) DEFAULT NULL, " +
+					"`user` bigint DEFAULT NULL, " +
+					"`status` varchar(45) DEFAULT NULL, " +
+					"PRIMARY KEY (`application_id`)" +
+					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+			jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS `test_upload` (" +
+					"`application_id` bigint NOT NULL AUTO_INCREMENT, " +
+					"`upload_file` varchar(250) DEFAULT NULL, " +
+					"PRIMARY KEY (`application_id`)" +
+					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+			log.info("Verified all core tables exist in database.");
+		} catch (Exception e) {
+			log.warn("Table auto-creation notice: {}", e.getMessage());
 		}
 	}
 
