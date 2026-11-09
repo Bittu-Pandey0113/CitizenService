@@ -1,0 +1,8 @@
+# Caddy reverse proxy configuration
+# If using a public domain or DuckDNS / sslip.io:
+# Replace :80 with your domain (e.g. citizen-service.duckdns.org or <PUBLIC_IP>.sslip.io)
+# Caddy will automatically issue and renew a free Let's Encrypt SSL certificate!
+
+:80 {
+    reverse_proxy 127.0.0.1:8080
+}

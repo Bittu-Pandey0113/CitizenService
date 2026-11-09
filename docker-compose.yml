@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  database:
+    image: mysql:8.4
+    container_name: citizenservice_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_production_password_change_me
+      MYSQL_DATABASE: citizen_service
+      MYSQL_USER: citizen_user
+      MYSQL_PASSWORD: CitizenService_SecurePass2026!
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci --default-authentication-plugin=mysql_native_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/production_database_init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "127.0.0.1:3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "citizen_user", "-pCitizenService_SecurePass2026!"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: citizenservice_app
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      PORT: 8080
+      DB_HOST: database
+      DB_PORT: 3306
+      DB_NAME: citizen_service
+      DB_USERNAME: citizen_user
+      DB_PASSWORD: CitizenService_SecurePass2026!
+      DB_SSL: "false"
+    ports:
+      - "127.0.0.1:8080:8080"
+
+  reverse_proxy:
+    image: caddy:2-alpine
+    container_name: citizenservice_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  mysql_data:
+  caddy_data:
+  caddy_config:

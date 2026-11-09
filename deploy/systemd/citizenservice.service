@@ -1,0 +1,33 @@
+[Unit]
+Description=Citizen Service Portal Spring Boot Application
+After=network.target mysql.service
+Wants=mysql.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/citizenservice
+
+# Production Environment Variables
+Environment="PORT=8080"
+Environment="DB_HOST=127.0.0.1"
+Environment="DB_PORT=3306"
+Environment="DB_NAME=citizen_service"
+Environment="DB_USERNAME=citizen_user"
+Environment="DB_PASSWORD=CitizenService_SecurePass2026!"
+Environment="DB_SSL=false"
+
+# Java Executable & Memory Allocation (Adjust -Xmx based on instance RAM)
+ExecStart=/usr/bin/java -Xms256m -Xmx1024m -XX:+UseG1GC -jar /opt/citizenservice/citizenservice-1.0.0.war
+
+# Auto-restart on failure
+Restart=always
+RestartSec=10
+
+# Logging to systemd journal
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=citizenservice
+
+[Install]
+WantedBy=multi-user.target
