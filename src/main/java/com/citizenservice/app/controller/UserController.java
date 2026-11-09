@@ -57,19 +57,21 @@ public class UserController {
 	private MarriageCertificateRepository marriageCertificateRepository;
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String dashBoardPage(ModelMap model, HttpServletRequest request, HttpServletResponse response, String error,
-			String logout, RedirectAttributes message) {
+	public String dashBoardPage(ModelMap model, HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "error", required = false) String error,
+			@RequestParam(value = "logout", required = false) String logout,
+			RedirectAttributes message) {
 
 		if (error != null) {
 			model.addAttribute("error_msg", "Your username and password is invalid.");
 			message.addFlashAttribute("loginFail", "Invalid User Credential");
-			return "redirect:/";
+			return "redirect:/?error";
 		} else if (logout != null) {
 			model.addAttribute("success_msg", "You have been logged out successfully.");
 			message.addFlashAttribute("logout", "User Logged Out Successfully");
-			return "redirect:/";
+			return "redirect:/?logout";
 		} else {
-			return "redirect:/dashBoard.htm";
+			return "redirect:/";
 		}
 
 	}

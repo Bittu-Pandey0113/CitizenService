@@ -12,9 +12,7 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 import jakarta.servlet.DispatcherType;
 
 /**
- * Spring Security 7 configuration (component based - WebSecurityConfigurerAdapter
- * no longer exists). The UserDetailsService ({@code UserDetailsServiceImpl}) and the
- * PasswordEncoder below are picked up automatically by Spring Security.
+ * Spring Security configuration for Citizen Service Portal.
  */
 @Configuration
 @EnableWebSecurity
@@ -37,15 +35,29 @@ public class AppSecurityConfig {
 				// JSP views are rendered through a server-side forward / include / error dispatch
 				.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR)
 				.permitAll()
-				.requestMatchers("/login").permitAll()
-				// This URL can be accessed by the specified roles of a logged in user.
-				.requestMatchers("/dashBoard.htm").hasAnyAuthority("Admin", "user", "Authority")
-				// Same behaviour as the original application: all other URLs are not restricted here.
+				// Publicly accessible pages and static resources
+				.requestMatchers("/", "/login", "/signUp.htm", "/addSignUpUser.htm", "/forgotPassword.htm",
+						"/submitOtp.htm", "/changePasswordForForgotCase.htm", "/static/**", "/resources/**", "/css/**", "/js/**", "/images/**")
+				.permitAll()
+				// Protected portal routes requiring authentication
+				.requestMatchers("/dashBoard.htm", "/applyBirthCertificate.htm", "/applyDeathCertificate.htm",
+						"/applyMarriageCertificate.htm", "/checkApplicationStatus.htm", "/printBCertificate.htm",
+						"/printDCertificate.htm", "/printMCertificate.htm", "/editProfile.htm", "/changePassword.htm")
+				.hasAnyAuthority("Admin", "user", "Authority")
+				// Authority review endpoints
+				.requestMatchers("/approveBirthCertificate.htm", "/approveDeathCertificate.htm",
+						"/approveMarriageCertificate.htm", "/approveUserBirthCertificate.htm",
+						"/approveUserDeathCertificate.htm", "/approveUserMarriageCertificate.htm")
+				.hasAnyAuthority("Admin", "Authority")
+				// Admin endpoints
+				.requestMatchers("/createUser.htm", "/manageUser.htm", "/createRole.htm", "/manageRole.htm")
+				.hasAuthority("Admin")
 				.anyRequest().permitAll())
 			.formLogin(form -> form
-				.loginPage("/login")
-				.failureUrl("/login?error")
-				.defaultSuccessUrl("/dashBoard.htm")
+				.loginPage("/")
+				.loginProcessingUrl("/login")
+				.failureUrl("/?error")
+				.defaultSuccessUrl("/dashBoard.htm", true)
 				.usernameParameter("loginUserName")
 				.passwordParameter("loginPassword")
 				.permitAll())
@@ -53,8 +65,7 @@ public class AppSecurityConfig {
 				.logoutUrl("/logout")
 				.invalidateHttpSession(true)
 				.deleteCookies("JSESSIONID")
-				.logoutSuccessUrl("/login?logout"))
-			.httpBasic(Customizer.withDefaults())
+				.logoutSuccessUrl("/?logout"))
 			.sessionManagement(session -> session.sessionFixation(fixation -> fixation.newSession()))
 			.exceptionHandling(ex -> ex.accessDeniedPage("/403"));
 
