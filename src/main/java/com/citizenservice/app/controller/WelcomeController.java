@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.citizenservice.app.model.User;
 import com.citizenservice.app.model.UserRole;
@@ -21,6 +22,12 @@ public class WelcomeController {
 	@GetMapping("/")
 	public String index(HttpServletRequest request) {	
 		return "site.index";  
+	} 
+
+	@GetMapping(value = {"/ping", "/health.htm"}, produces = "text/plain")
+	@ResponseBody
+	public String health() {
+		return "UP";
 	} 
 	
 	@GetMapping("/dashBoard.htm") 

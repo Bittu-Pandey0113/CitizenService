@@ -36,7 +36,7 @@ public class AppSecurityConfig {
 				.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR)
 				.permitAll()
 				// Publicly accessible pages and static resources
-				.requestMatchers("/", "/login", "/signUp.htm", "/addSignUpUser.htm", "/forgotPassword.htm",
+				.requestMatchers("/", "/ping", "/health.htm", "/login", "/signUp.htm", "/addSignUpUser.htm", "/forgotPassword.htm",
 						"/submitOtp.htm", "/changePasswordForForgotCase.htm", "/static/**", "/resources/**", "/css/**", "/js/**", "/images/**")
 				.permitAll()
 				// Protected portal routes requiring authentication
